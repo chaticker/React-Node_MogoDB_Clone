@@ -53,6 +53,15 @@ router.post('/uploadVideo', (req, res) => {
     })
 })
 
+router.get('/getVideos', (req, res) => {
+    //비디오 정보 디비에서 가져와서 클라이언트에 보내기
+    //populate: 을 해야 writer의 모든 정보를 가져올 수 있음 
+    Video.find().populate('writer').exec((err, videos) => {
+        if(err) return res.status(400).send(err);
+        res.status(200).json({ success: true, videos})
+    })
+})
+
 router.post("/thumbnail", (req, res) => {
 
     let thumbsFilePath ="";
