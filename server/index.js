@@ -33,7 +33,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
+//user, video 라우터로 감
 app.use('/api/users', require('./routes/users'));
+app.use('/api/video', require('./routes/video'));
 
 
 //use this to show the image you have in node js server to client (react js)

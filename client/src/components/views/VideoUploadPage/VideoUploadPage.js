@@ -21,6 +21,7 @@ const Catogory = [
 ]
 
 function UploadVideoPage(props) {
+    //리덕스 스토어에 있는 state에 가서 user를 가져옴 -> 모든 정보가 user에 담기게 됨
     const user = useSelector(state => state.user);
 
     const [title, setTitle] = useState("");
@@ -64,6 +65,8 @@ function UploadVideoPage(props) {
             return alert('Please first fill all the fields')
         }
 
+        //models/Video.js 컬렉션에 넣는 변수 정의
+        //리덕스에서 가져오기 
         const variables = {
             writer: user.userData._id,
             title: title,
@@ -79,9 +82,11 @@ function UploadVideoPage(props) {
             .then(response => {
                 if (response.data.success) {
                     alert('video Uploaded Successfully')
-                    props.history.push('/')
+                    setTimeout(() => {
+                        props.history.push('/')
+                    }, 2000);
                 } else {
-                    alert('Failed to upload video')
+                    alert('비디오 업로드 실패')
                 }
             })
 
@@ -95,26 +100,27 @@ function UploadVideoPage(props) {
         }
         console.log(files)
         formData.append("file", files[0])
-
+        //서버에 파일 데이터 보내기
         axios.post('/api/video/uploadfiles', formData, config)
             .then(response => {
                 if (response.data.success) {
-
+                    
+                    //썸네일에 사용될 변수
                     let variable = {
                         filePath: response.data.filePath,
                         fileName: response.data.fileName
                     }
                     setFilePath(response.data.filePath)
 
-                    //gerenate thumbnail with this filepath ! 
-
+                    //썸네일 생성
                     axios.post('/api/video/thumbnail', variable)
                         .then(response => {
                             if (response.data.success) {
+                                console.log(response.data)
                                 setDuration(response.data.fileDuration)
                                 setThumbnail(response.data.thumbsFilePath)
                             } else {
-                                alert('Failed to make the thumbnails');
+                                alert('썸네일 생성 실패');
                             }
                         })
 
