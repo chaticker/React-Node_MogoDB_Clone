@@ -42,7 +42,16 @@ router.post('/uploadfiles', (req, res) => {
         //url:... -> uploads 폴더 안에 있는 파일의 경로를 클라이언트에 보내줌
         return res.json({ success: true, filePath: res.req.file.path, fileName: res.req.file.filename })
     })
-})
+});
+
+router.post('/getVideoDetail', (req, res) => {
+    Video.findOne({ "_id": req.body.videoId })
+        .populate('writer')
+        .exec((err, videoDetail) => {
+            if(err) return res.status(400).send(err)
+            return res.status(200).json({ success: true,  videoDetail})
+        })
+});
 
 router.post('/uploadVideo', (req, res) => {
     //비디오 모든 정보를 몽고에 저장 
@@ -51,7 +60,7 @@ router.post('/uploadVideo', (req, res) => {
         if(err) return res.json({ success: false, err })
         res.status(200).json({ success: true })
     })
-})
+});
 
 router.get('/getVideos', (req, res) => {
     //비디오 정보 디비에서 가져와서 클라이언트에 보내기
@@ -60,7 +69,7 @@ router.get('/getVideos', (req, res) => {
         if(err) return res.status(400).send(err);
         res.status(200).json({ success: true, videos})
     })
-})
+});
 
 router.post("/thumbnail", (req, res) => {
 
