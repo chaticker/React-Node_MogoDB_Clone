@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Row, Col, List, Avatar } from 'antd';
 import Axios from 'axios';
 import SideVideo from './Sections/SideVideo';
+import Subscribe from './Sections/Subscribe';
 
 function VideoDetailPage(props) {
 
@@ -28,7 +29,8 @@ function VideoDetailPage(props) {
                     <div style={{ width: '100%', padding: '3rem 4rem' }}>
                         <video style={{ width: '100%' }} src={`http://localhost:5000/${videoDetail.filePath}`} controls></video>
                         <List.Item
-                            actions
+                            //userTo를 Subscribe 컴포넌트로 보내기
+                            actions={[<Subscribe userTo={videoDetail.writer._id} userFrom={localStorage.getItem('userId')} />]}
                         >
                             <List.Item.Meta
                                 avatar={<Avatar src={videoDetail.writer.image} />}
@@ -42,7 +44,6 @@ function VideoDetailPage(props) {
                 </Col>
 
                 <Col lg={6} xs={24}>
-                    {/* sideVideo */}
                     <SideVideo />
                 </Col>
             </Row>
