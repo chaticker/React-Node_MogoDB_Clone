@@ -3,6 +3,7 @@ import { Row, Col, List, Avatar } from 'antd';
 import Axios from 'axios';
 import SideVideo from './Sections/SideVideo';
 import Subscribe from './Sections/Subscribe';
+import Comment from './Sections/Comment';
 
 function VideoDetailPage(props) {
 
@@ -10,6 +11,8 @@ function VideoDetailPage(props) {
     const variable = { videoId: videoId }
 
     const [videoDetail, setVideoDetail] = useState([])
+    //댓글과 관련된 상태 정보 담김
+    const [CommentLists, setCommentLists] = useState([])
 
     useEffect(() => {
         Axios.post('/api/video/getVideoDetail', variable)
@@ -17,12 +20,29 @@ function VideoDetailPage(props) {
                 if(response.data.success) {
                     setVideoDetail(response.data.videoDetail)
                 } else {
-                    alert('비디오 정보 가져오기 실패')
+                    alert('비디오 정보 로드 실패')
                 }
             })
+
+        Axios.post('./api/comment/getComments', variable)
+            .then(response => {
+                if(response.data.success) {
+                    setCommentLists(response.data.comments)
+                } else {
+                    alert('댓글 로드 실패')
+                }
+            })
+            
     }, [])
 
+    const refreshFunction = (newComments) => { 
+        setCommentLists(CommentLists.concat(newComments))
+    }
+
     if( videoDetail.writer ){
+
+        const subscribeButton = videoDetail.writer._id !== localStorage.getItem('userId') && <Subscribe userTo={videoDetail.writer._id} userFrom={localStorage.getItem('userId')} />
+
         return (
             <Row gutter={[16, 16]}>
                 <Col lg={18} xs={24}>
@@ -30,16 +50,15 @@ function VideoDetailPage(props) {
                         <video style={{ width: '100%' }} src={`http://localhost:5000/${videoDetail.filePath}`} controls></video>
                         <List.Item
                             //userTo를 Subscribe 컴포넌트로 보내기
-                            actions={[<Subscribe userTo={videoDetail.writer._id} userFrom={localStorage.getItem('userId')} />]}
-                        >
+                            actions={[ subscribeButton ]}
+                        > 
                             <List.Item.Meta
                                 avatar={<Avatar src={videoDetail.writer.image} />}
                                 title={videoDetail.writer.name}
                                 description={videoDetail.description}
                             />
                         </List.Item>
-    
-                        {/* comments */}
+                        <Comment refreshFunction={refreshFunction} CommentLists={CommentLists} postId={props.postId}/>
                     </div>
                 </Col>
 
