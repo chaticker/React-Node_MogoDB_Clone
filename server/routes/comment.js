@@ -2,12 +2,9 @@ const express = require('express');
 const router = express.Router();
 const { Comment } = require("../models/Comment");
 
-const { auth } = require("../middleware/auth");
-
 //=================================
 //             Subscribe
 //=================================
-
 
 router.post("/saveComment", (req, res) => {
 
@@ -28,7 +25,7 @@ router.post("/saveComment", (req, res) => {
 
 router.post("/getComments", (req, res) => {
 
-    Comment.find({ "postId": req.body.videoId })
+    Comment.find({ "postId": req.body.postId })
         .populate('writer')
         .exec((err, comments) => {
             if (err) return res.status(400).send(err)
@@ -36,8 +33,6 @@ router.post("/getComments", (req, res) => {
         })
 
 });
-
-
 
 
 module.exports = router;

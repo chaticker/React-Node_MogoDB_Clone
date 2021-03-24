@@ -1,7 +1,8 @@
 import Axios from 'axios';
 import React, { useState } from 'react';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import SingleComment from './SingleComment';
+import ReplyComment from './ReplyComment';
 
 function Comment(props) {
     //redux 안에 있는 state에서 사용자 정보를 가져와서 변수에 넣기
@@ -43,7 +44,11 @@ function Comment(props) {
 
             {props.CommentLists && props.CommentLists.map((comment, index) => (
                 (!comment.responseTo &&
-                    <SingleComment refreshFunction={props.refreshFunction} comment={comment} postId={props.postId} />    
+                    //jsx 문법을 사용할 때, <React.Fragment>로 감싸줘야 함 
+                    <React.Fragment>
+                        <SingleComment comment={comment} postId={props.postId} refreshFunction={props.refreshFunction} />
+                        <ReplyComment CommentLists={props.CommentLists} postId={props.postId} parentCommentId={comment._id} refreshFunction={props.refreshFunction} />
+                    </React.Fragment>
                 )
             ))}
 

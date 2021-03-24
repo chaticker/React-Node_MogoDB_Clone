@@ -4,6 +4,7 @@ import Axios from 'axios';
 import SideVideo from './Sections/SideVideo';
 import Subscribe from './Sections/Subscribe';
 import Comment from './Sections/Comment';
+import LikeDislikes from './Sections/LikeDislikes';
 
 function VideoDetailPage(props) {
 
@@ -11,7 +12,6 @@ function VideoDetailPage(props) {
     const variable = { videoId: videoId }
 
     const [videoDetail, setVideoDetail] = useState([])
-    //댓글과 관련된 상태 정보 담김
     const [CommentLists, setCommentLists] = useState([])
 
     useEffect(() => {
@@ -24,7 +24,7 @@ function VideoDetailPage(props) {
                 }
             })
 
-        Axios.post('./api/comment/getComments', variable)
+        Axios.post('/api/comment/getComments', variable)
             .then(response => {
                 if(response.data.success) {
                     setCommentLists(response.data.comments)
@@ -50,7 +50,7 @@ function VideoDetailPage(props) {
                         <video style={{ width: '100%' }} src={`http://localhost:5000/${videoDetail.filePath}`} controls></video>
                         <List.Item
                             //userTo를 Subscribe 컴포넌트로 보내기
-                            actions={[ subscribeButton ]}
+                            actions={[ <LikeDislikes video userId={localStorage.getItem('userId')} videoId={videoId}/>, subscribeButton ]}
                         > 
                             <List.Item.Meta
                                 avatar={<Avatar src={videoDetail.writer.image} />}

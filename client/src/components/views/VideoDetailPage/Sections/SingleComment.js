@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Comment, Avatar, Button, Input } from 'antd';
 import Axios from 'axios';
 import { useSelector } from 'react-redux';
+import LikeDislikes from './LikeDislikes';
 
 const { TextArea } = Input;
 
@@ -25,10 +26,10 @@ function SingleComment(props) {
         event.preventDefault();
 
         const variables = {
-            content: CommentValue,
             writer: user.userData._id,
             postId: props.postId,
-            responseTo: props.comment._Id
+            responseTo: props.comment._id,
+            content: CommentValue
         }
 
         Axios.post('/api/comment/saveComment', variables)
@@ -44,18 +45,20 @@ function SingleComment(props) {
     }
 
     const actions = [
-        <span onClick={onClickReplyOpen} key="comment-basic-reply-to">댓글 달기</span>
+        <LikeDislikes userId={localStorage.getItem('userId')} commnetId={props.comment._id}/>
+        ,<span onClick={onClickReplyOpen} key="comment-basic-reply-to">댓글 달기</span>
     ]
 
     return (
         <div>
+        {props.comment.writer && (
             <Comment
-                actions={actions}
-                author={props.comment.writer.name}
+                actions= {actions}
+                author= {props.comment.writer.name}
                 avatar = {<Avatar src={props.comment.writer.image} alt="image" />}
                 content = { <p> {props.comment.content} </p> }
             />
-            
+            )}   
             {OpenReply && //OpenReply가 true일 때만 폼이 나오도록 지정
                 <form style={{ display: 'flex' }} onSubmit={onSubmit}>
                     <textarea
